@@ -1,18 +1,20 @@
-# Spring Boot Security Demo
+# Spring Boot Security Demo - Bootstrap Redesign
 
-This project demonstrates a comprehensive Spring Security implementation with UserDetails and GrantedAuthority interfaces, featuring role-based access control, database-backed authentication, and a modern web interface with enhanced validation and security features.
+This project demonstrates a comprehensive Spring Security implementation with UserDetails and GrantedAuthority interfaces, featuring role-based access control, database-backed authentication, and a modern Bootstrap-based web interface with enhanced validation and security features.
 
 ## Features
 
+- **Email-Based Authentication**: Users authenticate using their email address instead of username
 - **User Authentication**: Database-backed user authentication with BCrypt password encoding
 - **Role-Based Access Control**: Users can have multiple roles (USER, ADMIN) with proper role hierarchy
 - **Admin Panel**: Full CRUD operations for user management with role assignment (Admin only)
 - **User Dashboard**: Personal user information display with role badges
-- **Modern UI**: Professional, responsive design with consistent styling
+- **Modern Bootstrap UI**: Professional, responsive design using Bootstrap 5.3.0
 - **Secure Logout**: Enhanced logout with session invalidation and cookie cleanup
 - **Role Management**: Visual role badges and flexible role assignment
 - **Role Validation**: Required role assignment with client and server-side validation
 - **Enhanced Security**: Multiple layers of validation and security measures
+- **Modal-Based Interface**: Edit and delete operations using Bootstrap modals
 
 ## Technology Stack
 
@@ -21,6 +23,7 @@ This project demonstrates a comprehensive Spring Security implementation with Us
 - Spring Data JPA with transaction management
 - MySQL Database (or H2 for development)
 - Thymeleaf Templates with Spring Security 5 dialect
+- Bootstrap 5.3.0 for modern UI
 - Maven
 
 ## Project Structure
@@ -32,14 +35,15 @@ src/main/java/habsida/spring/boot_security/demo/
 │   ├── SuccessUserHandler.java         # Role-based login success handler
 │   └── DataInitializer.java           # Database initialization with role hierarchy
 ├── controller/
-│   ├── MainController.java            # Main page controller
+│   ├── HomeController.java            # Home page redirect controller
+│   ├── LoginController.java           # Login page controller
 │   ├── UserController.java            # User page controller with authentication injection
 │   └── AdminController.java           # Admin CRUD controller with role validation
 ├── entity/
 │   ├── User.java                      # User entity (implements UserDetails)
 │   └── Role.java                      # Role entity (implements GrantedAuthority)
 ├── repository/
-│   ├── UserRepository.java            # User data access
+│   ├── UserRepository.java            # User data access with email-based queries
 │   └── RoleRepository.java            # Role data access
 └── service/
     ├── UserService.java               # User business logic with password handling
@@ -53,10 +57,11 @@ The application supports both MySQL and H2 databases. Update the database creden
 
 ### MySQL Configuration
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/spring_security_demo?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+spring.datasource.url=jdbc:mysql://localhost:3306/spring_security_demo?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
 spring.datasource.username=root
-spring.datasource.password=root
+spring.datasource.password=your_password
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.hibernate.ddl-auto=create-drop
 ```
 
 ### H2 Configuration (Development)
@@ -65,6 +70,7 @@ spring.datasource.url=jdbc:h2:mem:testdb
 spring.datasource.driver-class-name=org.h2.Driver
 spring.datasource.username=sa
 spring.datasource.password=
+spring.jpa.hibernate.ddl-auto=create-drop
 ```
 
 ## Default Users
@@ -72,18 +78,18 @@ spring.datasource.password=
 The application automatically creates two users on startup with proper role hierarchy:
 
 1. **Admin User**:
-   - Username: `admin`
+   - Email: `admin@admin`
    - Password: `admin`
    - Roles: `ROLE_ADMIN` + `ROLE_USER` (inherits user privileges)
 
 2. **Regular User**:
-   - Username: `user`
+   - Email: `user@user`
    - Password: `user`
    - Role: `ROLE_USER`
 
 ## Access Control
 
-- **Public Access**: `/`, `/index` (login page with feature list)
+- **Public Access**: `/`, `/login` (login page with Bootstrap styling)
 - **Admin Only**: `/admin/**` (all admin operations with role management)
 - **User & Admin**: `/user/**` (user dashboard with role badges)
 - **Authentication Required**: All other pages
@@ -100,6 +106,13 @@ The application automatically creates two users on startup with proper role hier
 
 ## Key Implementation Details
 
+### Email-Based Authentication
+- **User Entity**: Uses email as the primary identifier for authentication
+- **UserDetails Implementation**: `getUsername()` method returns email address
+- **Repository Layer**: `findByEmail()` method for user lookup
+- **Service Layer**: Updated to use email-based authentication
+- **Login Form**: Email input field with proper validation
+
 ### Enhanced Security Features
 - **BCrypt Password Encoding**: Secure password hashing
 - **Session Management**: Complete session invalidation on logout
@@ -108,16 +121,24 @@ The application automatically creates two users on startup with proper role hier
 - **Role-Based Redirects**: Custom login success handler
 - **Role Validation**: Required role assignment with multiple validation layers
 
+### Modern Bootstrap UI
+- **Bootstrap 5.3.0**: Latest Bootstrap framework for responsive design
+- **Professional Layout**: Clean, modern interface with consistent styling
+- **Modal Dialogs**: Edit and delete operations using Bootstrap modals
+- **Responsive Design**: Mobile-friendly layouts and components
+- **Navigation**: Sidebar navigation with active state indicators
+- **Form Styling**: Bootstrap form components with validation states
+
 ### Role Requirement Validation
 - **Server-Side Validation**: Controller-level validation ensuring at least one role is selected
 - **Client-Side Validation**: JavaScript validation for immediate user feedback
-- **Visual Indicators**: Red asterisk (*) marking required role fields
+- **Visual Indicators**: Error messages and validation feedback
 - **Error Handling**: Clear error messages when validation fails
 - **Form Persistence**: User data preserved when validation fails
 
 ### UserDetails Interface
 The `User` entity implements `UserDetails` interface, providing:
-- User authentication information
+- User authentication information using email as username
 - Account status (enabled, non-expired, non-locked)
 - Authorities (roles) with proper collection handling
 - Database constraints for data integrity
@@ -134,23 +155,16 @@ The `Role` entity implements `GrantedAuthority` interface, defining:
 - **UserService**: Proper password handling for updates
 - **Data Consistency**: Proper transaction boundaries
 
-### Modern UI Features
-- **Responsive Design**: Mobile-friendly layouts
-- **Role Badges**: Visual role indicators
-- **Consistent Styling**: Unified button system
-- **Professional Layout**: Clean, modern design
-- **Interactive Elements**: Hover effects and transitions
-- **Validation Feedback**: Clear error messages and visual indicators
-
 ### CRUD Operations
 Admin users can perform full CRUD operations on users with role management:
-- **Create**: Add new users with required role assignment
-- **Read**: View all users in a professional table
-- **Update**: Edit existing user information and roles
-- **Delete**: Remove users with confirmation dialogs
+- **Create**: Add new users with required role assignment using dedicated form
+- **Read**: View all users in a professional Bootstrap table
+- **Update**: Edit existing user information and roles using modal dialogs
+- **Delete**: Remove users with confirmation dialogs in modals
 
 ## Security Features
 
+- **Email-Based Authentication**: Users authenticate using email addresses
 - **Password Encryption**: BCrypt password hashing
 - **Session Security**: Complete session invalidation
 - **Cookie Security**: Explicit cookie cleanup
@@ -163,12 +177,14 @@ Admin users can perform full CRUD operations on users with role management:
 
 ## UI/UX Improvements
 
-- **Professional Design**: Modern, clean interface
-- **Role Visualization**: Visual role badges
+- **Bootstrap 5.3.0**: Modern, responsive framework
+- **Professional Design**: Clean, modern interface with consistent styling
+- **Modal-Based Operations**: Edit and delete operations using Bootstrap modals
+- **Role Visualization**: Visual role badges and indicators
 - **Responsive Layout**: Mobile-friendly design
-- **Consistent Navigation**: Unified button styling
+- **Consistent Navigation**: Unified button styling and navigation
 - **User Feedback**: Confirmation dialogs and clear messaging
-- **Accessibility**: Proper semantic HTML and styling
+- **Accessibility**: Proper semantic HTML and ARIA labels
 - **Validation UX**: Immediate feedback and clear error messages
 - **Required Field Indicators**: Visual cues for mandatory fields
 
@@ -184,20 +200,30 @@ Admin users can perform full CRUD operations on users with role management:
 
 ## Latest Enhancements
 
-### Role Requirement Implementation
-- **Multi-Layer Validation**: Both client-side JavaScript and server-side controller validation
-- **User Experience**: Immediate feedback with JavaScript alerts and form error messages
-- **Data Integrity**: Ensures all users have at least one role assigned
-- **Visual Feedback**: Red asterisks and error messages for required fields
+### Email-Based Authentication System
+- **User Entity Updates**: Modified to use email as primary identifier
+- **Repository Layer**: Updated to use `findByEmail()` method
+- **Service Layer**: Modified authentication logic for email-based login
+- **Login Interface**: Updated login form to use email input field
+- **UserDetails Implementation**: `getUsername()` now returns email address
 
-### Enhanced Security
-- **POST-based Delete**: Secure delete operations using POST requests
-- **Confirmation Dialogs**: User confirmation before destructive operations
-- **Form Validation**: Comprehensive validation for user creation and updates
-- **Error Handling**: Graceful handling of validation failures
+### Bootstrap 5.3.0 Integration
+- **Modern UI Framework**: Latest Bootstrap version for responsive design
+- **Professional Styling**: Clean, modern interface with consistent components
+- **Modal Dialogs**: Edit and delete operations using Bootstrap modals
+- **Responsive Navigation**: Sidebar navigation with active state management
+- **Form Components**: Bootstrap form styling with validation states
 
-### Improved User Interface
-- **Professional Forms**: Clean, modern form design with validation
-- **Consistent Styling**: Unified button and form styling
-- **Responsive Design**: Mobile-friendly layouts
-- **Accessibility**: Proper semantic HTML and ARIA labels 
+### Enhanced User Interface
+- **Login Page**: Modern Bootstrap-styled login form
+- **Admin Panel**: Professional admin interface with tabbed navigation
+- **User Dashboard**: Clean user information display
+- **Modal Operations**: Inline edit and delete operations using modals
+- **Consistent Design**: Unified styling across all pages
+
+### Improved User Experience
+- **Streamlined Navigation**: Clear navigation with active state indicators
+- **Visual Feedback**: Role badges and status indicators
+- **Form Validation**: Client and server-side validation with clear error messages
+- **Responsive Design**: Mobile-friendly layouts and components
+- **Professional Layout**: Clean, modern design with proper spacing and typography 
