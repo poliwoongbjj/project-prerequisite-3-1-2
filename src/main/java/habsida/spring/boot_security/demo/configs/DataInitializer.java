@@ -39,9 +39,9 @@ public class DataInitializer implements CommandLineRunner {
         }
         
         // Create default admin user if doesn't exist
-        User adminUser = userService.findByUsername("admin");
+        User adminUser = userService.findByEmail("admin@admin");
         if (adminUser == null) {
-            adminUser = new User("admin", "admin", "admin@example.com", 30);
+            adminUser = new User("Admin", "Admin", 30, "admin@admin", "admin");
             Set<Role> adminRoles = new HashSet<>();
             adminRoles.add(adminRole);
             adminRoles.add(userRole); // Admin also has USER role
@@ -50,9 +50,9 @@ public class DataInitializer implements CommandLineRunner {
         }
         
         // Create default regular user if doesn't exist
-        User regularUser = userService.findByUsername("user");
+        User regularUser = userService.findByEmail("user@user");
         if (regularUser == null) {
-            regularUser = new User("user", "user", "user@example.com", 25);
+            regularUser = new User("User", "User", 25, "user@user", "user");
             Set<Role> userRoles = new HashSet<>();
             userRoles.add(userRole);
             regularUser.setRoles(userRoles);
@@ -61,7 +61,7 @@ public class DataInitializer implements CommandLineRunner {
         
         System.out.println("Data initialization completed!");
         System.out.println("Default users created:");
-        System.out.println("Admin: username=admin, password=admin (ADMIN + USER roles)");
-        System.out.println("User: username=user, password=user (USER role only)");
+        System.out.println("Admin: email=admin@admin, password=admin (ADMIN + USER roles)");
+        System.out.println("User: email=user@user, password=user (USER role only)");
     }
 } 
