@@ -5,6 +5,7 @@ import habsida.spring.boot_security.demo.entity.User;
 import habsida.spring.boot_security.demo.service.RoleService;
 import habsida.spring.boot_security.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,20 +30,30 @@ public class AdminController {
     @GetMapping
     public String adminPage(Model model) {
         model.addAttribute("users", userService.getAllUsers());
-        return "admin";
+        model.addAttribute("allRoles", roleService.getAllRoles());
+        return "all_users";
+    }
+
+    @GetMapping("/user")
+    public String adminUserProfile(Authentication authentication, Model model) {
+        String username = authentication.getName();
+        User user = userService.findByEmail(username);
+        model.addAttribute("user", user);
+        return "admin_user";
     }
 
     @GetMapping("/users")
     public String listUsers(Model model) {
         model.addAttribute("users", userService.getAllUsers());
-        return "admin/users";
+        model.addAttribute("allRoles", roleService.getAllRoles());
+        return "all_users";
     }
 
     @GetMapping("/users/new")
     public String newUserForm(Model model) {
         model.addAttribute("user", new User());
         model.addAttribute("allRoles", roleService.getAllRoles());
-        return "admin/new-user";
+        return "add_user";
     }
 
     @PostMapping("/users")
@@ -52,7 +63,7 @@ public class AdminController {
             model.addAttribute("user", user);
             model.addAttribute("allRoles", roleService.getAllRoles());
             model.addAttribute("roleError", "At least one role must be selected");
-            return "admin/new-user";
+            return "add_user";
         }
         
         Set<Role> roles = new HashSet<>();
@@ -65,7 +76,7 @@ public class AdminController {
         user.setRoles(roles);
         
         userService.saveUser(user);
-        return "redirect:/admin/users";
+        return "redirect:/admin";
     }
 
     @GetMapping("/users/{id}/edit")
@@ -74,9 +85,9 @@ public class AdminController {
         if (user != null) {
             model.addAttribute("user", user);
             model.addAttribute("allRoles", roleService.getAllRoles());
-            return "admin/edit-user";
+            return "all_users"; // The edit form is in the modal on all_users.html
         }
-        return "redirect:/admin/users";
+        return "redirect:/admin";
     }
 
     @PostMapping("/users/{id}")
@@ -89,7 +100,7 @@ public class AdminController {
             model.addAttribute("user", user);
             model.addAttribute("allRoles", roleService.getAllRoles());
             model.addAttribute("roleError", "At least one role must be selected");
-            return "admin/edit-user";
+            return "all_users"; // The edit form is in the modal on all_users.html
         }
         
         Set<Role> roles = new HashSet<>();
@@ -102,12 +113,12 @@ public class AdminController {
         user.setRoles(roles);
         
         userService.saveUser(user);
-        return "redirect:/admin/users";
+        return "redirect:/admin";
     }
 
     @PostMapping("/users/{id}/delete")
     public String deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
-        return "redirect:/admin/users";
+        return "redirect:/admin";
     }
 } 

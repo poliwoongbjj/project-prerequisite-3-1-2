@@ -23,8 +23,8 @@ public class UserController {
     @GetMapping
     public String userHome(Authentication authentication, Model model) {
         String username = authentication.getName();
-        User user = userService.findByUsername(username);
+        User user = userService.findByEmail(username);
         model.addAttribute("user", user);
-        return "user";
+        return "user_user";
     }
 } 
