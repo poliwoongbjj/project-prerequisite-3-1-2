@@ -55,15 +55,15 @@
                     <h6 class="mb-0 fw-bold">Add new user</h6>
                 </div>
                 <div class="card-body p-4">
-                    <form th:action="@{/admin/users}" method="post" th:object="${user}" class="d-flex flex-column align-items-center">
+                    <form id="addUserForm" class="d-flex flex-column align-items-center">
                         <div class="mb-3 w-100" style="max-width: 400px;">
                             <label for="firstName" class="form-label fw-bold text-center d-block">First Name</label>
-                            <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
+                            <input type="text" class="form-control" id="firstName" name="firstName" required>
                         </div>
                         
                         <div class="mb-3 w-100" style="max-width: 400px;">
                             <label for="lastName" class="form-label fw-bold text-center d-block">Last Name</label>
-                            <input type="text" class="form-control" id="lastName" th:field="*{lastName}" required>
+                            <input type="text" class="form-control" id="lastName" name="lastName" required>
                         </div>
                         
                         <div class="mb-3 w-100" style="max-width: 400px;">
@@ -73,24 +73,21 @@
                         
                         <div class="mb-3 w-100" style="max-width: 400px;">
                             <label for="email" class="form-label fw-bold text-center d-block">Email</label>
-                            <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                            <input type="email" class="form-control" id="email" name="email" required>
                         </div>
                         
                         <div class="mb-3 w-100" style="max-width: 400px;">
                             <label for="password" class="form-label fw-bold text-center d-block">Password</label>
-                            <input type="password" class="form-control" id="password" th:field="*{password}" required>
+                            <input type="password" class="form-control" id="password" name="password" required>
                         </div>
                         
                         <div class="mb-4 w-100" style="max-width: 400px;">
                             <label class="form-label fw-bold text-center d-block">Role</label>
-                            <select class="form-select" name="roleIds" multiple required style="height: 45px; overflow-y: auto;">
-                                <option th:each="role : ${allRoles}" 
-                                        th:value="${role.id}" 
-                                        th:text="${role.name == 'ROLE_ADMIN' ? 'ADMIN' : 'USER'}">
-                                    ADMIN
-                                </option>
+                            <select class="form-select" name="roleIds" multiple required style="height: 45px; overflow-y: auto;" id="roleSelect">
+                                <option value="1">USER</option>
+                                <option value="2">ADMIN</option>
                             </select>
-                            <div th:if="${roleError}" class="text-danger mt-1 small text-center" th:text="${roleError}"></div>
+                            <div id="roleError" class="text-danger mt-1 small text-center" style="display: none;"></div>
                         </div>
                         
                         <button type="submit" class="btn btn-success">Add new user</button>
@@ -101,6 +98,8 @@
     </div>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Admin JavaScript -->
+<script src="/js/admin.js"></script>
 </body>
 </html> 

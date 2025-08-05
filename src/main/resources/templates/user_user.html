@@ -55,13 +55,13 @@
                         </thead>
                         <tbody>
                             <tr class="table-secondary">
-                                <td class="border-0" th:text="${user.id}">2</td>
-                                <td class="border-0" th:text="${user.firstName}">User</td>
-                                <td class="border-0" th:text="${user.lastName}">User</td>
-                                <td class="border-0" th:text="${user.age}">38</td>
-                                <td class="border-0" th:text="${user.email}">user@user</td>
+                                <td class="border-0" data-user-info="id">Loading...</td>
+                                <td class="border-0" data-user-info="firstName">Loading...</td>
+                                <td class="border-0" data-user-info="lastName">Loading...</td>
+                                <td class="border-0" data-user-info="age">Loading...</td>
+                                <td class="border-0" data-user-info="email">Loading...</td>
                                 <td class="border-0">
-                                    <span th:with="hasAdmin=${#lists.contains(user.roles.![name], 'ROLE_ADMIN')}" th:text="${hasAdmin ? '[ADMIN]' : '[USER]'}">[USER]</span>
+                                    <span data-user-info="roles">Loading...</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -73,5 +73,7 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- User JavaScript -->
+    <script src="/js/user.js"></script>
 </body>
 </html> 
