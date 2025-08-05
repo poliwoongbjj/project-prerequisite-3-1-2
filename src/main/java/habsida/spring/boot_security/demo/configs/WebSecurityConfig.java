@@ -27,9 +27,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()  // Disable CSRF for REST API
                 .authorizeRequests()
                     .antMatchers("/admin").hasRole("ADMIN")
                     .antMatchers("/user").hasAnyRole("USER", "ADMIN")
+                    .antMatchers("/api/admin/**").hasRole("ADMIN")
+                    .antMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
                     .anyRequest().authenticated()
                 .and()
                 .formLogin()
