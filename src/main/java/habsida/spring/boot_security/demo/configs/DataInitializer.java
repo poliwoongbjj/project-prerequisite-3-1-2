@@ -6,6 +6,7 @@ import habsida.spring.boot_security.demo.service.RoleService;
 import habsida.spring.boot_security.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -16,11 +17,13 @@ public class DataInitializer implements CommandLineRunner {
     
     private final UserService userService;
     private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
     
     @Autowired
-    public DataInitializer(UserService userService, RoleService roleService) {
+    public DataInitializer(UserService userService, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.roleService = roleService;
+        this.passwordEncoder = passwordEncoder;
     }
     
     @Override
@@ -41,7 +44,7 @@ public class DataInitializer implements CommandLineRunner {
         // Create default admin user if doesn't exist
         User adminUser = userService.findByEmail("admin@admin");
         if (adminUser == null) {
-            adminUser = new User("Admin", "Admin", 30, "admin@admin", "admin");
+            adminUser = new User("Admin", "Admin", 30, "admin@admin", passwordEncoder.encode("admin"));
             Set<Role> adminRoles = new HashSet<>();
             adminRoles.add(adminRole);
             adminRoles.add(userRole); // Admin also has USER role
@@ -52,16 +55,11 @@ public class DataInitializer implements CommandLineRunner {
         // Create default regular user if doesn't exist
         User regularUser = userService.findByEmail("user@user");
         if (regularUser == null) {
-            regularUser = new User("User", "User", 25, "user@user", "user");
+            regularUser = new User("User", "User", 25, "user@user", passwordEncoder.encode("user"));
             Set<Role> userRoles = new HashSet<>();
             userRoles.add(userRole);
             regularUser.setRoles(userRoles);
             userService.saveUser(regularUser);
         }
-        
-        System.out.println("Data initialization completed!");
-        System.out.println("Default users created:");
-        System.out.println("Admin: email=admin@admin, password=admin (ADMIN + USER roles)");
-        System.out.println("User: email=user@user, password=user (USER role only)");
     }
 } 
