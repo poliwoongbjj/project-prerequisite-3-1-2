@@ -9,7 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +25,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/admin")
+@Transactional
 public class RestAdminController {
 
     private final UserService userService;
@@ -33,6 +42,7 @@ public class RestAdminController {
 
 
     @GetMapping("/users")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<User>> getAllUsers() {
         try {
             List<User> users = userService.getAllUsers();
@@ -43,6 +53,7 @@ public class RestAdminController {
     }
 
     @GetMapping("/users/{id}")
+    @Transactional(readOnly = true)
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         User user = userService.getUserById(id);
         if (user != null) {
@@ -52,6 +63,7 @@ public class RestAdminController {
     }
 
     @GetMapping("/roles")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Role>> getAllRoles() {
         List<Role> roles = roleService.getAllRoles();
         return ResponseEntity.ok(roles);

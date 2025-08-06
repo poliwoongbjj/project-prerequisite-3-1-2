@@ -139,6 +139,9 @@ class AdminManager {
                 this.renderUsersTable();
                 event.target.reset();
                 this.showAlert('User created successfully!', 'success');
+                
+                // Redirect to the user list/table after successful user creation
+                window.location.href = '/admin';
             } else {
                 const error = await response.text();
                 this.showAlert('Error creating user: ' + error, 'danger');
